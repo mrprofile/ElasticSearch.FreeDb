@@ -1,86 +1,121 @@
+//Run the following commands in Marvel Sense plugin.
+
+PUT /disk_v1
 {
-   "disk":{
-      "aliases":{
-
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1,
+    "analysis": {
+      "filter": {
+        "autocomplete_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20
+        }
       },
-      "mappings":{
-         "disk":{
-            "properties":{
-               "artist":{
-                  "type":"string"
-               },
-               "attributes":{
-                  "properties":{
-                     "EXTD":{
-                        "type":"string"
-                     },
-                     "Extd":{
-                        "type":"string"
-                     },
-                     "comparer":{
-                        "type":"object"
-                     },
-                     "count":{
-                        "type":"integer"
-                     },
-                     "item":{
-                        "type":"string"
-                     },
-                     "keys":{
-                        "properties":{
-                           "count":{
-                              "type":"integer"
-                           }
-                        }
-                     },
-                     "values":{
-                        "properties":{
-                           "count":{
-                              "type":"integer"
-                           }
-                        }
-                     }
-                  }
-               },
-               "diskIds":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               },
-               "diskLength":{
-                  "type":"integer"
-               },
-               "genre":{
-                  "type":"string",
-                  "index":"not_analyzed"
-               },
-               "title":{
-                  "type":"string"
-               },
-               "trackFramesOffsets":{
-                  "type":"integer"
-               },
-               "tracks":{
-                  "type":"string"
-               },
-               "year":{
-                  "type":"integer"
-               }
-            }
-         }
-      },
-      "settings":{
-         "index":{
-            "creation_date":"1433537363457",
-            "uuid":"h2Dl8NmiQuyg47yIm6UxKg",
-            "number_of_replicas":"1",
-            "number_of_shards":"1",
-            "version":{
-               "created":"1050299"
-            }
-         }
-      },
-      "warmers":{
-
+      "analyzer": {
+        "autocomplete": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "autocomplete_filter"
+          ]
+        }
       }
-   }
+    }
+  }
 }
+
+PUT /disk_v1/_alias/disk
+
+PUT /disk_v1/_mapping/disk
+{
+  "disk": {
+    "properties": {
+      "artist": {
+        "type": "string",
+        "index" : "analyzed",
+        "index_analyzer": "autocomplete",
+        "search_analyzer": "standard"
+      },
+      "attributes": {
+        "properties": {
+          "EXTD": {
+            "type": "string"
+          },
+          "Extd": {
+            "type": "string"
+          },
+          "comparer": {
+            "type": "object"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "item": {
+            "type": "string"
+          },
+          "keys": {
+            "properties": {
+              "count": {
+                "type": "integer"
+              }
+            }
+          },
+          "values": {
+            "properties": {
+              "count": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "diskIds": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "diskLength": {
+        "type": "integer",
+        "index": "not_analyzed"
+      },
+      "genre": {
+        "type": "multi_field",
+        "fields":{
+						"name":{
+							"type" : "string",
+							"index_analyzer" : "autocomplete",
+							"search_analyzer" : "standard"
+						},
+						"raw":{
+							"type" : "string",
+							"index": "not_analyzed"
+						}
+					}
+      },
+      "title": {
+        "type": "string",
+        "index" : "analyzed",
+        "index_analyzer": "autocomplete",
+        "search_analyzer": "standard"
+      },
+      "trackFramesOffsets": {
+        "type": "integer",
+        "index": "not_analyzed"
+      },
+      "tracks": {
+        "type": "string",
+        "index" : "analyzed",
+        "index_analyzer": "autocomplete",
+        "search_analyzer": "standard"
+      },
+      "year": {
+        "type": "integer",
+        "index": "not_analyzed"
+      }
+    }
+  }
+}
+}
+
