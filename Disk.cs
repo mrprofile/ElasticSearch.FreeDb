@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Nest;
 
 namespace XmcdParser
 {
@@ -7,18 +6,12 @@ namespace XmcdParser
     {
         public string Title { get; set; }
         public string Artist { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed, Store = false)]
-        public int DiskLength { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+        public int DiskLength { get; set; }        
         public string Genre { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
         public int Year { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed, Store = false)]
         public List<string> DiskIds { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed, Store = false)]
         public List<int> TrackFramesOffsets { get; set; }
         public List<string> Tracks { get; set; }
-        [ElasticProperty(Index = FieldIndexOption.NotAnalyzed, Store = false)]
         public Dictionary<string, string> Attributes { get; set; }
         public Disk()
         {
