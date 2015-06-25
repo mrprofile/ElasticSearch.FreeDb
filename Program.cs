@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using ICSharpCode.SharpZipLib.BZip2;
@@ -60,10 +61,41 @@ namespace XmcdParser
                     {
                         batchCount++;
                         var disk = parser.Parse(fileText);
-                        descriptor.Index<Disk>(op =>
+                        /*descriptor.Index<Disk>(op =>
                                                 op.Type("disk")
                                                 .Index("disk")
-                                                .Document(disk));
+                                                .Document(disk));*/
+                        var id = Guid.NewGuid().ToString().Replace("-", "");
+                        var album = new AutoComplete() { ObjectType = "Album", Name = disk.Title, Id = "Album" + Guid.NewGuid().ToString().Replace("-", "") };
+                        var artist = new AutoComplete() { ObjectType = "Artist", Name = disk.Artist, Id = "Album" + Guid.NewGuid().ToString().Replace("-", "") };
+                        var songs = new List<AutoComplete>();
+                        var finalList = new List<AutoComplete>();
+                        disk.Tracks.ForEach(x => songs.Add(new AutoComplete() { Id = "Song" + Guid.NewGuid().ToString().Replace("-", ""), ObjectType = "Song", Name = x }));
+
+                        finalList.Add(artist);
+                        finalList.Add(album);
+                        finalList.AddRange(songs);
+                        /*finalList.ForEach(x => descriptor.Index<AutoComplete>(op =>
+                                                op.Type("autocomplete")
+                                                .Index("autocomplete")
+                                                .Document(x)));*/
+
+                        descriptor.IndexMany<AutoComplete>(finalList, (indexDescriptor, complete) => indexDescriptor.Index("autocomplete").Type("autocomplete"));
+
+                        /*descriptor.Index<AutoComplete>(op =>
+                                                op.Type("autocomplete")
+                                                .Index("autocomplete")
+                                                .Document(album));
+
+                        descriptor.Index<AutoComplete>(op =>
+                                                op.Type("autocomplete")
+                                                .Index("autocomplete")
+                                                .Document(artist));*/
+                        /*
+                        songs.ForEach(x => descriptor.Index<AutoComplete>(op =>
+                                                op.Type("autocomplete")
+                                                .Index("autocomplete")
+                                                .Document(x)));*/
 
                         if (batchCount % numOfBatch == 0)
                         {
@@ -83,6 +115,8 @@ namespace XmcdParser
                     }
                 }
             }
+
+
         }
     }
 }

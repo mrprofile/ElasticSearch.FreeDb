@@ -2,6 +2,13 @@
 
 namespace XmcdParser
 {
+    public class AutoComplete
+    {
+        public string Name { get; set; }
+        public string ObjectType { get; set; }
+        public string Id { get; set; }
+    }
+
     public class Disk
     {
         public string Title { get; set; }
