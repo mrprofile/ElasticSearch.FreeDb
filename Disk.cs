@@ -6,6 +6,7 @@ namespace XmcdParser
     {
         public string Name { get; set; }
         public string ObjectType { get; set; }
+        public string Misc { get; set; }
         public string Id { get; set; }
     }
 

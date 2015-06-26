@@ -66,11 +66,11 @@ namespace XmcdParser
                                                 .Index("disk")
                                                 .Document(disk));*/
                         var id = Guid.NewGuid().ToString().Replace("-", "");
-                        var album = new AutoComplete() { ObjectType = "Album", Name = disk.Title, Id = "Album" + Guid.NewGuid().ToString().Replace("-", "") };
-                        var artist = new AutoComplete() { ObjectType = "Artist", Name = disk.Artist, Id = "Album" + Guid.NewGuid().ToString().Replace("-", "") };
+                        var album = new AutoComplete() { ObjectType = "Album", Name = disk.Title, Id = "Album" + Guid.NewGuid().ToString().Replace("-", ""), Misc = disk.Artist};
+                        var artist = new AutoComplete() { ObjectType = "Artist", Name = disk.Artist, Id = "Artist" + Guid.NewGuid().ToString().Replace("-", "") };
                         var songs = new List<AutoComplete>();
                         var finalList = new List<AutoComplete>();
-                        disk.Tracks.ForEach(x => songs.Add(new AutoComplete() { Id = "Song" + Guid.NewGuid().ToString().Replace("-", ""), ObjectType = "Song", Name = x }));
+                        disk.Tracks.ForEach(x => songs.Add(new AutoComplete() { Id = "Song" + Guid.NewGuid().ToString().Replace("-", ""), ObjectType = "Song", Name = x , Misc = disk.Artist }));
 
                         finalList.Add(artist);
                         finalList.Add(album);
