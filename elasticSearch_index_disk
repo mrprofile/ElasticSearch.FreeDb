@@ -1,6 +1,4 @@
-//Run the following commands in Marvel Sense plugin.
-
-PUT /autocomplete_v1
+PUT /eventsearch_v1
 {
   "settings": {
     "number_of_shards": 5,
@@ -27,212 +25,108 @@ PUT /autocomplete_v1
   }
 }
 
-PUT /autocomplete_v1/_alias/autocomplete
+PUT /eventsearch_v1/_alias/eventsearch
+DELETE eventsearch
 
-PUT /autocomplete_v1/_mapping/autocomplete
+PUT /eventsearch_v1/_mapping/eventsearch
 {
-  "autocomplete": {
-    "properties": {
-      "name": {
-        "type": "string",
-        "index": "analyzed",
-        "index_analyzer": "autocomplete",
-        "search_analyzer": "standard"
-      },
-      "objecttype": {
-        "type": "multi_field",
-        "fields": {
-          "name": {
+   "eventsearch": {
+      "properties": {
+         "departmentId": {
+            "type": "integer",
+            "index": "not_analyzed"
+         },
+         "eventId": {
+            "type": "string",
+            "index": "not_analyzed"
+         },
+         "city": {
+            "type": "multi_field",
+            "fields": {
+               "name": {
+                  "type": "string",
+                  "index_analyzer": "autocomplete",
+                  "search_analyzer": "standard"
+               },
+               "raw": {
+                  "type": "string",
+                  "index": "not_analyzed"
+               }
+            }
+         },
+         "dateTime": {
+            "type": "date",
+            "index": "not_analyzed"
+         },
+         "eventDate": {
+            "type": "date",
+            "index": "not_analyzed"
+         },
+         "eventDateTimeValue": {
+            "type": "date",
+            "index": "not_analyzed"
+         },
+         "eventImageLocation": {
+            "type": "string",
+            "index": "not_analyzed"
+         },
+         "offerId": {
+            "type": "integer",
+            "index": "not_analyzed"
+         },
+         "stateAbbrev": {
+            "type": "string",
+            "index": "not_analyzed"
+         },
+         "ticketUrl": {
+            "type": "string",
+            "index": "not_analyzed"
+         },
+         "title": {
             "type": "string",
             "index_analyzer": "autocomplete",
             "search_analyzer": "standard"
-          },
-          "raw": {
+         },
+         "venueName": {
             "type": "string",
-            "index": "not_analyzed"
-          }
-        }
-      }
-    }
-  }
-}
-}
-
-PUT /disk_v1/_alias/disk
-
-DELETE /autocomplete_v1/_mapping/autocomplete
-DELETE /autocomplete_v1
-DELETE /autocomplete
-
-
-
-GET /autocomplete_v1/_search
-{
-    "query": {
-        "filtered": {
-            "query":  { "match": { "objecttype.raw": "Song" }}
-        }
-    }
-}
-
-PUT /disk_v1
-{
-  "settings": {
-    "number_of_shards": 5,
-    "number_of_replicas": 1,
-    "analysis": {
-      "filter": {
-        "autocomplete_filter": {
-          "type": "edge_ngram",
-          "min_gram": 1,
-          "max_gram": 20
-        }
-      },
-      "analyzer": {
-        "autocomplete": {
-          "type": "custom",
-          "tokenizer": "standard",
-          "filter": [
-            "lowercase",
-            "autocomplete_filter"
-          ]
-        }
-      }
-    }
-  }
-}
-
-PUT /disk_v1/_alias/disk
-
-DELETE /disk_v1/_mapping/disk
-DELETE /disk_v1
-DELETE /disk
-
-PUT /disk_v1/_mapping/disk
-{
-  "disk": {
-    "properties": {
-      "artist": {
-        "type": "string",
-        "index": "analyzed",
-        "index_analyzer": "autocomplete",
-        "search_analyzer": "standard"
-      },
-      "attributes": {
-        "properties": {
-          "EXTD": {
-            "type": "string"
-          },
-          "Extd": {
-            "type": "string"
-          },
-          "comparer": {
-            "type": "object"
-          },
-          "count": {
+            "index_analyzer": "autocomplete",
+            "search_analyzer": "standard"
+         },
+         "location": {
+            "type": "geo_point"
+         },
+         "soldOut": {
+            "type": "boolean"
+         },
+         "romeEventId": {
             "type": "integer"
-          },
-          "item": {
-            "type": "string"
-          },
-          "keys": {
-            "properties": {
-              "count": {
-                "type": "integer"
-              }
-            }
-          },
-          "values": {
-            "properties": {
-              "count": {
-                "type": "integer"
-              }
-            }
-          }
-        }
-      },
-      "diskIds": {
-        "type": "string",
-        "index": "not_analyzed"
-      },
-      "diskLength": {
-        "type": "integer",
-        "index": "not_analyzed"
-      },
-      "genre": {
-        "type": "multi_field",
-        "fields": {
-          "name": {
-            "type": "string",
-            "index_analyzer": "autocomplete",
-            "search_analyzer": "standard"
-          },
-          "raw": {
+         },
+         "tmVenueId": {
+            "type": "integer"
+         },
+         "offerType": {
             "type": "string",
             "index": "not_analyzed"
-          }
-        }
-      },
-      "title": {
-        "type": "string",
-        "index": "analyzed",
-        "index_analyzer": "autocomplete",
-        "search_analyzer": "standard"
-      },
-      "trackFramesOffsets": {
-        "type": "integer",
-        "index": "not_analyzed"
-      },
-      "tracks": {
-        "type": "string",
-        "index": "analyzed",
-        "index_analyzer": "autocomplete",
-        "search_analyzer": "standard"
-      },
-      "year": {
-        "type": "integer",
-        "index": "not_analyzed"
+         },
+         "artists": {
+            "type": "nested",
+            "properties": {
+               "name": {
+                  "type": "string",
+                  "index_analyzer": "autocomplete",
+                  "search_analyzer": "standard"
+               }
+            }
+         }
       }
-    }
-  }
+   }
 }
 }
-
-GET /disk_v1/_search
+GET /eventsearch/_search
 {
     "query": {
         "match": {
-            "artist": "soniq"
+            "artists.name": "Kodos"
         }
     }
-}
-
-GET /disk_v1/_search
-{
-    "query": {
-        "filtered": {
-            "query":  { "match": { "artist": "Sonique" }}
-        }
-    }
-}
-
-GET /disk_v1/_search
-{
-    "query": {
-        "filtered": {
-            "query":  { "match": { "artist": "Sonique" }},
-        }
-    }
-}
-
-GET /disk_v1/_search
-{
-  "multi_match" : {
-    "query":    "this is a test", 
-    "fields": [ "subject", "message" ] 
-  }
-}
-GET /disk_v1/_analyze?analyzer=autocomplete
-{
-  "quick brown"
 }
